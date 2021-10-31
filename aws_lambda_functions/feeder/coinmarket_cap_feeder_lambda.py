@@ -37,10 +37,15 @@ def lambda_handler(event, context):
     This function fetches content from MySQL RDS instance
     """
 
+    # Parse Event info if provided
+    number_of_results = coin_market_cap_api_config.coin_market_cap_limit_number_of_results
+    if event is not None:
+        number_of_results = event.get('number_of_results', coin_market_cap_api_config.coin_market_cap_limit_number_of_results)
+
     url = coin_market_cap_api_config.coin_market_cap_url
     parameters = {
         'start': '1',
-        'limit': coin_market_cap_api_config.coin_market_cap_limit_number_of_results,
+        'limit': number_of_results,
         'convert': 'CAD'
     }
     headers = {
@@ -54,7 +59,7 @@ def lambda_handler(event, context):
     try:
         response = session.get(url, params=parameters)
         data = json.loads(response.text)
-        print(str(data))
+        
         if data.get('status', {}).get('error_code', None) is not None and data.get('status', {}).get('error_code', 0) != 0:
             return "Error: Connecting to coin_market_cap_api. API Request Failure"
 
@@ -69,12 +74,14 @@ def lambda_handler(event, context):
                 'quote', {}).get('CAD', {}).get('price', 0)
             coin_market_cap = json_stock_data.get(
                 'quote', {}).get('CAD', {}).get('market_cap', 0)
+            coin_volume = json_stock_data.get(
+                'quote', {}).get('CAD', {}).get('volume_24h', 0)
             coin_last_updated = json_stock_data.get(
-                'quote', {}).get('CAD', {}).get('coin_market_cap', 0)
+                'quote', {}).get('CAD', {}).get('last_updated', 0)
 
             with conn.cursor() as cur:
                 cur.execute(
-                    f'insert into coin_data (Name, Symbol, Price, MarketCap, Last_Updated) values("{coin_name}", "{coin_symbol}", {coin_price}, {coin_market_cap}, "{coin_last_updated}")')
+                    f'insert into coin_data (Name, Symbol, Price, MarketCap, Volume, Last_Updated) values("{coin_name}", "{coin_symbol}", {coin_price}, {coin_market_cap}, {coin_volume}, "{coin_last_updated}")')
 
             conn.commit()
 

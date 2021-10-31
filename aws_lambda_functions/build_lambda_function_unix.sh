@@ -8,4 +8,5 @@ pip install -r requirements.txt
 
 read -p "Enter Lambda-ID: " id
 cp -R ${id}/. packages/virtual-env/lib/*/site-packages
-zip -r builds/${id}.zip packages/virtual-env/lib/*/site-packages 
+cd packages/virtual-env/lib/*/site-packages 
+zip -r ../../../../../builds/${id}.zip .
