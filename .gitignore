@@ -1,5 +1,0 @@
-# Remove Config Files From Commit
-aws_lambda_functions/feeder/coin_market_cap_api_config.py
-aws_lambda_functions/feeder/rds_config.py
-aws_lambda_functions/packages/virtual-env
-aws_lambda_functions/builds/*.zip
