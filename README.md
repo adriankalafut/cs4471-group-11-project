@@ -22,4 +22,7 @@ SNS Topic - GraphingAndLiveData - arn:aws:sns:ca-central-1:112450915150:Graphing
 SNS Topic - LoginUI - arn:aws:sns:ca-central-1:112450915150:LoginUI
 SNS Topic - SearchAndBrowse - arn:aws:sns:ca-central-1:112450915150:SearchAndBrowse
 SNS Topic - StockNotification - arn:aws:sns:ca-central-1:112450915150:StockNotification
+
+API Gateway - services-api-gateway (bih77wi1xd)
+
 ```
