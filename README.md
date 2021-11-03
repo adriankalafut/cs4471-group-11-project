@@ -25,4 +25,6 @@ SNS Topic - StockNotification - arn:aws:sns:ca-central-1:112450915150:StockNotif
 
 API Gateway - services-api-gateway (bih77wi1xd)
 
+AWS IOT URL - a3p8onx8y9a7q1-ats.iot.ca-central-1.amazonaws.com
+
 ```
