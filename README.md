@@ -27,4 +27,11 @@ API Gateway - services-api-gateway (bih77wi1xd)
 
 AWS IOT URL - a3p8onx8y9a7q1-ats.iot.ca-central-1.amazonaws.com
 
+
+Custom Domain Names
+
+Frontend Requests - https://cs4471stocktracker.com/ 
+Backend Requests - https://api.cs4471stocktracker.com/
+Constant Socket Connections - https://socket.cs4471stocktracker.com/ 
+
 ```
