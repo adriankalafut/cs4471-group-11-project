@@ -1,10 +1,28 @@
 import flask
+import rds_config
+import pymysql
+import json
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
+name = rds_config.db_username
+password = rds_config.db_password
+db_name = rds_config.db_name
 
-@app.route('/', methods=['GET'])
-def home():
-    return "<h1>Hello World</h1>"
-app.run()
+@app.route('/example_route_get_btc', methods=['GET'])
+def example_route_get_btc():
+    
+    try:
+        conn = pymysql.connect(host=rds_config.rds_host, user=name,
+                           passwd=password, db=db_name, connect_timeout=5, cursorclass=pymysql.cursors.DictCursor)
+    except pymysql.MySQLError as e:
+        # This should be an actual error
+        return str({"Error": "Can't Connect To DB" })
+
+    with conn.cursor() as cur:
+        cur.execute("SELECT * FROM coin_data.coin_data WHERE Symbol=\"BTC\" LIMIT 10;")
+        query_result = cur.fetchall()
+        return str(query_result)
+    return str({"Error": "Bad Query"})
+app.run(debug=True, host='0.0.0.0')

@@ -4,3 +4,7 @@ live_visualization_service/virtual-env
 login_service/virtual-env
 search_and_browse_service/virtual-env
 stock_subscribe_service/virtual-env
+
+# Ignore All Instances of the RDS Config File
+*/rds_config.py
+*/__pycache__
