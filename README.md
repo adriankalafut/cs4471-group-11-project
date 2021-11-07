@@ -18,11 +18,6 @@ Service Registry RDS DB - service-registry
 ECS Cluster - arn:aws:ecs:ca-central-1:112450915150:cluster/services-cluster
 EC2 EC2 Cluster Machine - i-0bb298e5a4d10bfd0
 
-SNS Topic - GraphingAndLiveData - arn:aws:sns:ca-central-1:112450915150:GraphingAndLiveData
-SNS Topic - LoginUI - arn:aws:sns:ca-central-1:112450915150:LoginUI
-SNS Topic - SearchAndBrowse - arn:aws:sns:ca-central-1:112450915150:SearchAndBrowse
-SNS Topic - StockNotification - arn:aws:sns:ca-central-1:112450915150:StockNotification
-
 API Gateway - services-api-gateway (bih77wi1xd)
 
 AWS IOT URL - a3p8onx8y9a7q1-ats.iot.ca-central-1.amazonaws.com
