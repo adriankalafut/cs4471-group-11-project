@@ -102,6 +102,7 @@ export default function NavbarComponent() {
             <>
               <StyledNavLink to="/visualization">Visualization</StyledNavLink>
               <StyledNavLink to="/dummy">Dummy</StyledNavLink>
+              <StyledNavLink to="/dummy-auth">Auth Token</StyledNavLink>
             </>
           )}
           <Box sx={{ display: { xs: "none", md: "flex" } }}>

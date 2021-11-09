@@ -5,6 +5,7 @@ import LoginComponent from "./Auth/LoginComponent";
 import NavbarComponent from "./NavBarComponent";
 import DummyComponent from "./Dummy/DummyComponent";
 import VisualizationComponent from "./Visualization/VisualizationComponent";
+import GetAuthTokenComponent from "./Dummy/GetAuthTokenComponent";
 function App() {
   return (
     <Router >
@@ -15,6 +16,7 @@ function App() {
           <Route exact path="/visualization" element={<VisualizationComponent />} />
           <Route exact path="/" element={<HomeComponent />} />
           <Route exact path="/dummy" element={<DummyComponent />} />
+          <Route exact path="/dummy-auth" element={<GetAuthTokenComponent />} />
         </Routes>
       </div>
     </Router>
