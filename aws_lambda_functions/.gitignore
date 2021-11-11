@@ -1,9 +1,8 @@
 # Lambda Functions
 
-feeder/coin_market_cap_api_config.py
-feeder/rds_config.py
+*/coin_market_cap_api_config.py
+*/rds_config.py
 packages/virtual-env
 builds/*.zip
-update-service-in-service-registry/venv
-update-service-in-service-registry/rds_config.py
-update-service-in-service-registry/__pycache__
+*/venv
+*/__pycache__
