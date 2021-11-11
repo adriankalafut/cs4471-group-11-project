@@ -6,4 +6,4 @@ packages/virtual-env
 builds/*.zip
 update-service-in-service-registry/venv
 update-service-in-service-registry/rds_config.py
-update-service-in-service-registry/pycache
+update-service-in-service-registry/__pycache__
