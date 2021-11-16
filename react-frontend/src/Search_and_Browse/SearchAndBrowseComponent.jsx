@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import MaterialTable from '@material-table/core';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -20,6 +21,10 @@ const CenteredDiv = styled.div`
 
 
 export default function SearchAndBrowseComponent() {
+  let navigate = useNavigate();
+  function handleClick(rowData) {
+    navigate(`/visualization/${rowData.Symbol}`);
+  }
 
   let [coinData, setCoinData] = useState([]);
   useEffect(() => {
@@ -47,6 +52,7 @@ export default function SearchAndBrowseComponent() {
         { title: "Symbol", field: "Symbol" },
       ]}
       data={coinData}
+      onRowClick={(event, rowData) => handleClick(rowData)}
       title=""
     />)}
     </CenteredDiv>

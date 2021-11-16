@@ -21,6 +21,9 @@ rds_username = rds_config.db_username
 rds_password = rds_config.db_password
 rds_db_name = rds_config.db_name
 
+# Note - Redis cannot be externally accessed outside of AWS.
+# You must run a local instance of redis while developing
+
 redis_host = redis_config.redis_host
 
 if isDevRegion:
