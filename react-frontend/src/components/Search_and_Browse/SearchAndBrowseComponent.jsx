@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import MaterialTable from '@material-table/core';
 import CircularProgress from '@mui/material/CircularProgress';
-import search_and_browse_get_all_coins from "../api/search-and-browse/search-and-browse-all-coins"
+import search_and_browse_get_all_coins from "../../api/search-and-browse/search-and-browse-all-coins"
 
 const CenteredTitle = styled.h1`
   text-align: center;

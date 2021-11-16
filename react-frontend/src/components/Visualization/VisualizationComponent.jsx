@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import CircularProgress from '@mui/material/CircularProgress';
 import styled from "styled-components";
-import search_and_browse_get_specific_coin from "../api/search-and-browse/search-and-browse-specific-coin"
+import search_and_browse_get_specific_coin from "../../api/search-and-browse/search-and-browse-specific-coin"
 
 const CenteredDiv = styled.div`
   display: flex;

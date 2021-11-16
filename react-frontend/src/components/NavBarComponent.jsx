@@ -14,6 +14,8 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import { Hub, Auth } from "aws-amplify";
 import { NavLink, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import get_active_services from "../api/get-active-services/get-active-services"
+import resolveActiveServices from "../helper/resolveActiveServices";
 
 const StyledNavLink = styled(NavLink)`
   text-decoration: none;
@@ -27,19 +29,36 @@ export default function NavbarComponent() {
   const goToHomePage = () => navigate("/");
 
   let [user, setUser] = useState(null);
+  let [activeServices, setActiveServices] = useState({
+    'live_visualization_service': false,
+    'search_and_browse_service': false,
+    'login_service': false,
+    'notification_service': false,
+  });
+
   useEffect(() => {
-    let updateUser = async () => {
+    let authUser = async () => {
       try {
-        let user = await Auth.currentAuthenticatedUser();
+        const user = await Auth.currentAuthenticatedUser();
         setUser(user);
-        console.log(user);
       } catch {
         setUser(null);
       }
     };
-    Hub.listen("auth", updateUser); // listen for login/signup events
-    updateUser(); // check manually the first time because we won't get a Hub event
-    return () => Hub.remove("auth", updateUser); // cleanup
+    let getActiveServices = async () => {
+      try {
+        let services = await get_active_services();
+        services = resolveActiveServices(services);
+        setActiveServices(services);
+      } catch (e) {
+        console.log(e)
+        setActiveServices(null);
+      }
+    };
+    getActiveServices();
+    Hub.listen("auth", authUser); // listen for login/signup events
+    authUser(); // check manually the first time because we won't get a Hub event
+    return () => Hub.remove("auth", authUser); // cleanup
   }, []);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -86,23 +105,27 @@ export default function NavbarComponent() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" style={{backgroundColor: '#1976d2'}}>
+      <AppBar position="static" style={{ backgroundColor: '#1976d2' }}>
         <Toolbar>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            color="white"
-            sx={{ display: { xs: "none", sm: "block" } }}
-          >
-            CS4471 - Crypto Tracker
-          </Typography>
+          <StyledNavLink to="/">
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              color="white"
+              sx={{ display: { xs: "none", sm: "block" } }}
+            >
+              CS4471 - Crypto Tracker
+            </Typography>
+          </StyledNavLink>
 
           <Box sx={{ flexGrow: 1 }} />
           {user !== null && (
             <>
-              <StyledNavLink to="/search_and_browse">Search and Browse</StyledNavLink>
-              <StyledNavLink to="/visualization">Visualization</StyledNavLink>
+              {activeServices && activeServices['search_and_browse_service'] && (<StyledNavLink to="/search_and_browse">Search and Browse</StyledNavLink>)}
+              {activeServices && activeServices['live_visualization_service'] && (<StyledNavLink to="/visualization">Visualization</StyledNavLink>)}
+              {activeServices && activeServices['notification_service'] && (<StyledNavLink to="/notification">Notification</StyledNavLink>)}
+
               <StyledNavLink to="/dummy-auth">Auth Token</StyledNavLink>
             </>
           )}

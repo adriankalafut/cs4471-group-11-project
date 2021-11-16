@@ -42,7 +42,7 @@ def lambda_handler(event, context):
             cur.execute(
                 f'SELECT service_name FROM service_registry.service_registry where active = "TRUE";')
             query_result = cur.fetchall()
-            return str(query_result)        
+            return json.dumps(query_result, indent=4, sort_keys=True, default=str)     
     except Exception as e:
         print(e)
     

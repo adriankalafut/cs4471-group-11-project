@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Amplify from "aws-amplify";
 import { Hub, Auth } from "aws-amplify";
 import { withAuthenticator } from "@aws-amplify/ui-react";
-import awsconfig from "../aws-exports";
+import awsconfig from "../../aws-exports";
 Amplify.configure(awsconfig);
 
 function LoginComponent() {

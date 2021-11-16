@@ -11,3 +11,6 @@ export const DUMMY_ROUTE = `${ROOT_API_URL}dummy`;
 export const SEARCH_AND_BROWSE_ALL_COINS = `${ROOT_API_URL}coins/all`;
 export const SEARCH_AND_BROWSE_SPECIFIC_COINS = `${ROOT_API_URL}coins`;
 // Notification Routes
+
+// Active Services
+export const GET_ACTIVE_SERVICES = `${ROOT_API_URL}services/active`;
