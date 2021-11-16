@@ -86,12 +86,13 @@ export default function NavbarComponent() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="static" style={{backgroundColor: '#1976d2'}}>
         <Toolbar>
           <Typography
             variant="h6"
             noWrap
             component="div"
+            color="white"
             sx={{ display: { xs: "none", sm: "block" } }}
           >
             CS4471 - Crypto Tracker
@@ -100,8 +101,8 @@ export default function NavbarComponent() {
           <Box sx={{ flexGrow: 1 }} />
           {user !== null && (
             <>
+              <StyledNavLink to="/search_and_browse">Search and Browse</StyledNavLink>
               <StyledNavLink to="/visualization">Visualization</StyledNavLink>
-              <StyledNavLink to="/dummy">Dummy</StyledNavLink>
               <StyledNavLink to="/dummy-auth">Auth Token</StyledNavLink>
             </>
           )}
@@ -115,7 +116,7 @@ export default function NavbarComponent() {
               </NavLink>
             ) : (
               <>
-                <IconButton size="large" color="inherit">
+                <IconButton size="large" style={{ color: "white" }}>
                   <Badge badgeContent={0} color="error">
                     <NotificationsIcon />
                   </Badge>

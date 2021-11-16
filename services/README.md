@@ -16,8 +16,8 @@ Steps To Promote & Expose A Service on AWS
 
 ```
 Assure port is exposed in Dockerfile
-Build and push to ECR
-Define new Task in ECS
+Build and push to ECR - docker build -t NAME_GOES_HERE .   and docker push 112450915150.dkr.ecr.ca-central-1.amazonaws.com/NAME_GOES_HERE
+Define new Task in ECS 
 Update/Push Service to Cluster in ECS (Assure that you enable DNS lookup)
 Note: if you are updating an existing service, you will likely have to scale the number of tasks to 0, then back to 1 for the chance to take effect.
 
