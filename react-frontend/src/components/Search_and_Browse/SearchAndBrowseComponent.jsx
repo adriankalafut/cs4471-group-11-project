@@ -15,7 +15,7 @@ const CenteredDiv = styled.div`
   flex-direction: column;
   justify-content: center;  /* Centering y-axis */
   align-items :center;
-  max-width: '95%'
+  width: '60%'
   padding-top': '10%
 `;
 
@@ -46,7 +46,7 @@ export default function SearchAndBrowseComponent() {
     {coinData.length === 0 ? (<CircularProgress />)
     : (
     <MaterialTable
-      style={{minWidth:"95%"}}
+      style={{width: "60%"}}
       columns={[
         { title: "Name", field: "Name" },
         { title: "Symbol", field: "Symbol" },
@@ -54,6 +54,12 @@ export default function SearchAndBrowseComponent() {
       data={coinData}
       onRowClick={(event, rowData) => handleClick(rowData)}
       title=""
+      options={{
+        paging:true,
+        pageSize: 10,       // make initial page size
+        emptyRowsWhenPaging: false,   // To avoid of having empty rows
+        pageSizeOptions:[10, ],    // rows selection options
+      }}
     />)}
     </CenteredDiv>
   );
