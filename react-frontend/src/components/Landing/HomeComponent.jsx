@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import landing_art from '../static/landing_art_long.png'
+import landing_art from '../../static/landing_art_long.png'
 
 const CenteredDiv = styled.div`
   
