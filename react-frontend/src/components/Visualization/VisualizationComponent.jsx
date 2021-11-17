@@ -28,8 +28,10 @@ const CenteredDiv = styled.div`
 const COIN_IMAGE_URL = "https://www.gemini.com/images/currencies/icons/default/"
 
 export default function VisualizationComponent({symbol}) {
-  let [coinData, setCoinData] = useState(null);
+  let [coinData, setCoinData] = useState(null);  
   let [imageLoaded, setImageLoaded] = useState(false);
+  let [imageError, setImageError] = useState(false);
+
   useEffect(() => {
     let fetchCoinData = async () => {
       try {
@@ -47,7 +49,7 @@ export default function VisualizationComponent({symbol}) {
     <CenteredDiv>
     {(coinData === null && !imageLoaded) && (<CircularProgress />)}
     <CenteredPaper>
-    {coinData !== null && (<img height="50%" width="50%" src={COIN_IMAGE_URL + coinData.Symbol + ".svg"} alt="Coin logo" onLoad={() => setImageLoaded(true)}></img>)}
+    {coinData !== null && (<img height="50%" width="50%" src={COIN_IMAGE_URL + coinData.Symbol + ".svg"} alt="Coin logo" hidden={imageError} onError={() => {setImageLoaded(true); setImageError(true)}} onLoad={() => setImageLoaded(true)}></img>)}
     {(coinData !== null && imageLoaded) && (
       <div style={{margin: "10%", textAlign: "center"}}>
         <p>Name - {coinData.Name}</p>
