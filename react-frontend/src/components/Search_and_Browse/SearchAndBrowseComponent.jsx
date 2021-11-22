@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { PubSub } from "aws-amplify";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import MaterialTable from '@material-table/core';
@@ -32,7 +33,7 @@ export default function SearchAndBrowseComponent() {
       try {
         const fetchedCoinData = await search_and_browse_get_all_coins();
         setCoinData(fetchedCoinData);
-      } catch (e){
+      } catch (e) {
         console.log(e)
         setCoinData([]);
       }
@@ -40,27 +41,37 @@ export default function SearchAndBrowseComponent() {
     fetchCoinData();
   }, []);
 
+  // Available Services Pub Sub Setup
+  PubSub.subscribe('Search_and_Browse_Pub_Sub_Update').subscribe({
+    next: service_update_data => {
+      const { AllCoinsData } = service_update_data.value;
+      setCoinData(AllCoinsData);
+    },
+    error: error => console.error(error),
+  });
+
   return (
     <CenteredDiv>
-    <CenteredTitle>Search and Browse</CenteredTitle>
-    {coinData.length === 0 ? (<CircularProgress />)
-    : (
-    <MaterialTable
-      style={{width: "60%"}}
-      columns={[
-        { title: "Name", field: "Name" },
-        { title: "Symbol", field: "Symbol" },
-      ]}
-      data={coinData}
-      onRowClick={(event, rowData) => handleClick(rowData)}
-      title=""
-      options={{
-        paging:true,
-        pageSize: 10,       // make initial page size
-        emptyRowsWhenPaging: false,   // To avoid of having empty rows
-        pageSizeOptions:[10, ],    // rows selection options
-      }}
-    />)}
+      <CenteredTitle>Search and Browse</CenteredTitle>
+      {coinData.length === 0 ? (<CircularProgress />)
+        : (
+          <MaterialTable
+            style={{ width: "60%" }}
+            columns={[
+              { title: "Name", field: "Name" },
+              { title: "Symbol", field: "Symbol" },
+              { title: "Price", field: "Price", type: 'numeric'}
+            ]}
+            data={coinData}
+            onRowClick={(event, rowData) => handleClick(rowData)}
+            title=""
+            options={{
+              paging: true,
+              pageSize: 10,       // make initial page size
+              emptyRowsWhenPaging: false,   // To avoid of having empty rows
+              pageSizeOptions: [10,],    // rows selection options
+            }}
+          />)}
     </CenteredDiv>
   );
 }

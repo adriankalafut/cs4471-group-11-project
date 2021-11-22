@@ -7,6 +7,7 @@ import logging
 import rds_config
 import coin_market_cap_api_config
 import pymysql
+import time
 from requests import Request, Session
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 import json
@@ -15,6 +16,8 @@ import json
 name = rds_config.db_username
 password = rds_config.db_password
 db_name = rds_config.db_name
+
+APPLICATION_ROOT_URL = 'https://api.cs4471stocktracker.com'
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -84,6 +87,15 @@ def lambda_handler(event, context):
                     f'insert into coin_data (Name, Symbol, Price, MarketCap, Volume, Last_Updated) values("{coin_name}", "{coin_symbol}", {coin_price}, {coin_market_cap}, {coin_volume}, "{coin_last_updated}")')
 
             conn.commit()
+        
+        # Wait for database changes to be taken
+        
+        time.sleep(15)
+        # Notify Cluster pods of Updated Data
+        session = Session()
+        response = session.get(f"{APPLICATION_ROOT_URL}/coins/lambda_invoke_update")
+        
+        print('Completed Invoking Lambda Update')
 
     except (ConnectionError, Timeout, TooManyRedirects) as e:
         print(e)

@@ -8,3 +8,4 @@ stock_subscribe_service/virtual-env
 # Ignore All Instances of the RDS Config File
 */rds_config.py
 */__pycache__
+*/91454ac9e6f4f8a1bb0eff59a037e5af2539a74b7ba58dca17949428fb8b0d3d-private.pem.key

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { PubSub } from "aws-amplify";
 import CircularProgress from '@mui/material/CircularProgress';
 import Paper from '@material-ui/core/Paper'
 import styled from "styled-components";
@@ -36,6 +37,14 @@ export default function VisualizationComponent({symbol}) {
     let fetchCoinData = async () => {
       try {
         const fetchedCoinData = await search_and_browse_get_specific_coin(symbol);
+        // Available Services Pub Sub Setup
+        PubSub.subscribe(`Search_and_Browse_${fetchedCoinData.Symbol}`).subscribe({
+          next: service_update_data => {
+            const { Single_Coin_Data } = service_update_data.value;
+            setCoinData(Single_Coin_Data);
+          },
+          error: error => console.error(error),
+        });
         setCoinData(fetchedCoinData);
       } catch (e){
         console.log(e)
