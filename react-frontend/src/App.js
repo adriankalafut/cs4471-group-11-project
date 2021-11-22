@@ -34,6 +34,7 @@ function App() {
           <Route exact path="/service_browser" element={<ServiceBrowser />} />
           <Route exact path="/login" element={<LoginComponent />} />
           <Route path="/visualization/:symbol" element={<Visualization />} />
+          <Route exact path="/visualization" element={<VisualizationComponent />}/>
           <Route exact path="/search_and_browse" element={<SearchAndBrowseComponent />} />
           <Route exact path="/" element={<HomeComponent />} />
           <Route exact path="/dummy-auth" element={<GetAuthTokenComponent />} />
