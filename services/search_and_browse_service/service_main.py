@@ -17,7 +17,7 @@ app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 
-isDevRegion = True
+isDevRegion = False
 
 rds_host = rds_config.rds_host
 rds_username = rds_config.db_username
@@ -70,7 +70,7 @@ def get_all_coin_names_resolver():
 
         with conn.cursor() as cur:
             cur.execute(
-                f"SELECT coin_data.Name, coin_data.Symbol, coin_data.Price FROM coin_data.coin_data WHERE Last_Updated = (SELECT Last_Updated FROM coin_data LIMIT 1);")
+                f"SELECT coin_data.Name, coin_data.Symbol, coin_data.Price FROM coin_data.coin_data WHERE Last_Updated = (SELECT Last_Updated FROM coin_data ORDER BY Last_Updated DESC LIMIT 1);")
             query_result = cur.fetchall()
 
             # Add To Redis
@@ -135,7 +135,7 @@ def helper_lookup_all_coins_info_for_lambda():
 
         with conn.cursor() as cur:
             cur.execute(
-                f"SELECT * FROM coin_data.coin_data WHERE Last_Updated = (SELECT Last_Updated FROM coin_data LIMIT 1);")
+                f"SELECT * FROM coin_data.coin_data WHERE Last_Updated = (SELECT Last_Updated FROM coin_data ORDER BY Last_Updated DESC LIMIT 1);")
             query_result = cur.fetchall()
 
             return query_result
