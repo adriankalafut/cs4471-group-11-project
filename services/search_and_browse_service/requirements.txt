@@ -4,3 +4,4 @@ hiredis
 pymysql
 requests
 python-dateutil
+AWSIoTPythonSDK

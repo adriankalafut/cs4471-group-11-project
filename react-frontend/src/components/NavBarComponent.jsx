@@ -122,6 +122,7 @@ export default function NavbarComponent() {
           <Box sx={{ flexGrow: 1 }} />
           {user !== null && (
             <>
+              <StyledNavLink to="/service_browser">Service Browser</StyledNavLink>
               {activeServices && activeServices['search_and_browse_service'] && (<StyledNavLink to="/search_and_browse">Search and Browse</StyledNavLink>)}
               {activeServices && activeServices['live_visualization_service'] && (<StyledNavLink to="/visualization">Visualization</StyledNavLink>)}
               {activeServices && activeServices['notification_service'] && (<StyledNavLink to="/notification">Notification</StyledNavLink>)}
