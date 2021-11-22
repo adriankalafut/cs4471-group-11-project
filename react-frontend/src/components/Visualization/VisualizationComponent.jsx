@@ -63,7 +63,7 @@ export default function VisualizationComponent({symbol}) {
       <div style={{margin: "10%", textAlign: "center"}}>
         <p>Name - {coinData.Name}</p>
         <p>Symbol - {coinData.Symbol}</p>
-        <p>Price - {coinData.Symbol}</p>
+        <p>Price - {coinData.Price}</p>
         <p>Market Cap - {coinData.MarketCap}</p>
         <p>Volume - {coinData.Volume}</p>
         <p>Time Last Updated - {coinData.Last_Updated}</p>
