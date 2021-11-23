@@ -5,4 +5,3 @@ pymysql
 requests
 python-dateutil
 awsiotsdk
-awscrt
