@@ -41,6 +41,7 @@ export default function NavbarComponent() {
       try {
         const user = await Auth.currentAuthenticatedUser();
         setUser(user);
+        getActiveServices();
       } catch {
         setUser(null);
       }
@@ -58,7 +59,6 @@ export default function NavbarComponent() {
     getActiveServices();
     Hub.listen("auth", authUser); // listen for login/signup events
     authUser(); // check manually the first time because we won't get a Hub event
-    return () => Hub.remove("auth", authUser); // cleanup
   }, []);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
