@@ -24,23 +24,19 @@ const StyledNavLink = styled(NavLink)`
   padding-right: 2%;
 `;
 
-export default function NavbarComponent() {
+export default function NavbarComponent({completedRenderingCallback}) {
   const navigate = useNavigate();
   const goToHomePage = () => navigate("/");
 
   let [user, setUser] = useState(null);
-  let [activeServices, setActiveServices] = useState({
-    'live_visualization_service': false,
-    'search_and_browse_service': false,
-    'login_service': false,
-    'notification_service': false,
-  });
+  let [activeServices, setActiveServices] = useState(undefined);
 
   useEffect(() => {
     let authUser = async () => {
       try {
         const user = await Auth.currentAuthenticatedUser();
         setUser(user);
+        getActiveServices();
       } catch {
         setUser(null);
       }
@@ -50,16 +46,15 @@ export default function NavbarComponent() {
         let services = await get_active_services();
         services = resolveActiveServices(services);
         setActiveServices(services);
+        completedRenderingCallback();
       } catch (e) {
-        console.log(e)
         setActiveServices(null);
       }
     };
     getActiveServices();
     Hub.listen("auth", authUser); // listen for login/signup events
     authUser(); // check manually the first time because we won't get a Hub event
-    return () => Hub.remove("auth", authUser); // cleanup
-  }, []);
+  }, [completedRenderingCallback]);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
@@ -104,6 +99,8 @@ export default function NavbarComponent() {
   );
 
   return (
+    <>
+    {activeServices !== undefined && (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" style={{ backgroundColor: '#1976d2' }}>
         <Toolbar>
@@ -126,7 +123,6 @@ export default function NavbarComponent() {
               {activeServices && activeServices['search_and_browse_service'] && (<StyledNavLink to="/search_and_browse">Search and Browse</StyledNavLink>)}
               {activeServices && activeServices['live_visualization_service'] && (<StyledNavLink to="/visualization">Visualization</StyledNavLink>)}
               {activeServices && activeServices['notification_service'] && (<StyledNavLink to="/notification">Notification</StyledNavLink>)}
-
               <StyledNavLink to="/dummy-auth">Auth Token</StyledNavLink>
             </>
           )}
@@ -163,5 +159,7 @@ export default function NavbarComponent() {
       </AppBar>
       {renderMenu}
     </Box>
+    )}
+  </>
   );
 }

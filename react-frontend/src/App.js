@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Amplify from 'aws-amplify';
 import { AWSIoTProvider } from '@aws-amplify/pubsub';
 import { BrowserRouter as Router, Route, Routes, useParams } from "react-router-dom";
@@ -26,18 +26,26 @@ function Visualization() {
   );
 }
 function App() {
+  let [renderingComplete, setRenderingComplete] = useState(false);
+
+  const completedRenderingCallback = () => setRenderingComplete(true);
   return (
     <Router >
-      <NavbarComponent />
+      <NavbarComponent completedRenderingCallback={completedRenderingCallback}/>
       <div>
         <Routes>
-          <Route exact path="/service_browser" element={<ServiceBrowser />} />
           <Route exact path="/login" element={<LoginComponent />} />
-          <Route path="/visualization/:symbol" element={<Visualization />} />
-          <Route exact path="/visualization" element={<VisualizationComponent />}/>
-          <Route exact path="/search_and_browse" element={<SearchAndBrowseComponent />} />
-          <Route exact path="/" element={<HomeComponent />} />
-          <Route exact path="/dummy-auth" element={<GetAuthTokenComponent />} />
+          {renderingComplete && (
+            <>
+            <Route exact path="/service_browser" element={<ServiceBrowser />} />
+            <Route path="/visualization/:symbol" element={<Visualization />} />
+            <Route exact path="/visualization" element={<VisualizationComponent />}/>
+            <Route exact path="/search_and_browse" element={<SearchAndBrowseComponent />} />
+            <Route exact path="/" element={<HomeComponent />} />
+            <Route exact path="/dummy-auth" element={<GetAuthTokenComponent />} />
+            </>
+          )}
+          
         </Routes>
       </div>
     </Router>
