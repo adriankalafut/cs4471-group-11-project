@@ -14,3 +14,6 @@ export const SEARCH_AND_BROWSE_SPECIFIC_COINS = `${ROOT_API_URL}coins`;
 
 // Active Services
 export const GET_ACTIVE_SERVICES = `${ROOT_API_URL}services/active`;
+
+// Subscribed services
+export const GET_SUBSCRIBED_SERVICES = `${ROOT_API_URL}subscriptions`;

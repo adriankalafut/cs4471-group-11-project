@@ -15,7 +15,10 @@ import { Hub, Auth } from "aws-amplify";
 import { NavLink, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import get_active_services from "../api/get-active-services/get-active-services"
+import get_subscribed_services from "../api/get-subscribed-services/get-subscribed-services"
 import resolveActiveServices from "../helper/resolveActiveServices";
+import resolveSubscribedServices from "../helper/resolveSubscribedServices";
+import availableAndSubscribedServicesIntersection from "../helper/availableAndSubscribedServicesIntersection";
 
 const StyledNavLink = styled(NavLink)`
   text-decoration: none;
@@ -23,20 +26,25 @@ const StyledNavLink = styled(NavLink)`
   padding-left: 2%;
   padding-right: 2%;
 `;
-
-export default function NavbarComponent({completedRenderingCallback}) {
+let username = null;
+export default function NavbarComponent() {
   const navigate = useNavigate();
   const goToHomePage = () => navigate("/");
 
   let [user, setUser] = useState(null);
-  let [activeServices, setActiveServices] = useState(undefined);
+  let [activeServices, setActiveServices] = useState({
+    'live_visualization_service': false,
+    'search_and_browse_service': false,
+    'login_service': false,
+    'notification_service': false,
+  });
 
   useEffect(() => {
     let authUser = async () => {
       try {
         const user = await Auth.currentAuthenticatedUser();
+        username = user["username"];
         setUser(user);
-        getActiveServices();
       } catch {
         setUser(null);
       }
@@ -45,8 +53,19 @@ export default function NavbarComponent({completedRenderingCallback}) {
       try {
         let services = await get_active_services();
         services = resolveActiveServices(services);
+
+        // get the services that the user is subscribed to
+        let userSubscribedServices = null;
+        if(username != null){
+          userSubscribedServices = await get_subscribed_services(username);
+          userSubscribedServices = resolveSubscribedServices(userSubscribedServices);
+        }
+        if(userSubscribedServices !=  null && services != null){
+          services = availableAndSubscribedServicesIntersection(services,userSubscribedServices);
+        }
+        // Perform  the intersection here
+        // Intersect services with subscribed services
         setActiveServices(services);
-        completedRenderingCallback();
       } catch (e) {
         setActiveServices(null);
       }
@@ -54,7 +73,8 @@ export default function NavbarComponent({completedRenderingCallback}) {
     getActiveServices();
     Hub.listen("auth", authUser); // listen for login/signup events
     authUser(); // check manually the first time because we won't get a Hub event
-  }, [completedRenderingCallback]);
+    return () => Hub.remove("auth", authUser); // cleanup
+  }, []);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
@@ -99,8 +119,6 @@ export default function NavbarComponent({completedRenderingCallback}) {
   );
 
   return (
-    <>
-    {activeServices !== undefined && (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" style={{ backgroundColor: '#1976d2' }}>
         <Toolbar>
@@ -123,6 +141,7 @@ export default function NavbarComponent({completedRenderingCallback}) {
               {activeServices && activeServices['search_and_browse_service'] && (<StyledNavLink to="/search_and_browse">Search and Browse</StyledNavLink>)}
               {activeServices && activeServices['live_visualization_service'] && (<StyledNavLink to="/visualization">Visualization</StyledNavLink>)}
               {activeServices && activeServices['notification_service'] && (<StyledNavLink to="/notification">Notification</StyledNavLink>)}
+
               <StyledNavLink to="/dummy-auth">Auth Token</StyledNavLink>
             </>
           )}
@@ -159,7 +178,5 @@ export default function NavbarComponent({completedRenderingCallback}) {
       </AppBar>
       {renderMenu}
     </Box>
-    )}
-  </>
   );
 }
