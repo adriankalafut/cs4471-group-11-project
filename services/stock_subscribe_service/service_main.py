@@ -75,6 +75,14 @@ def get_user_subscriptions():
                 f"SELECT subscribed_service FROM user_prefs WHERE user_name='{user}'")
             query_result = cur.fetchall()
 
+            # Check if the user is unsubscribed to all services
+            if(cur.rowcount == 0):
+                # Add subscription to Service browser 
+                cur.execute(
+                    f"INSERT INTO coin_data.user_prefs VALUES ('{user}','login_service');")
+                conn.commit()
+                query_result = [{'"subscribed_service":"login_service" '}]
+
             # Add To Redis
             redisObject = {"data": json.dumps(query_result, indent=4, default=str),
                         "time": str(datetime.datetime.now())}
@@ -86,6 +94,9 @@ def get_user_subscriptions():
 """
     Create app route for subscribing services to a user
     Expected parameters: 'service=<service_name> user=<name_of_user>'
+    [ { "subscribed_service": "login_service" } ]
+    [ "{'\"subscribed_service\":\"login_service\" '}" ]
+
 """
 @app.route('/subscribe', methods=['GET'])
 def subscribe_to_service():
@@ -130,7 +141,7 @@ def subscribe_to_service():
 
             # Check if the record was not added to the table
             if(cur.rowcount == 0):
-                return json.dumps('{"Status": "False"}', indent=4, sort_keys=True, default=str)
+                return json.dumps(str({"Status": "False"}), indent=4, sort_keys=True, default=str)
 
 
             # --------------  Update redis with recent changes -------------- 
@@ -144,7 +155,7 @@ def subscribe_to_service():
                         "time": str(datetime.datetime.now())}
             redisConnection.set(user +"_subscriptions", str(redisObject))
 
-        return json.dumps('{"Status":"True"}', indent=4, sort_keys=True, default=str)
+        return json.dumps(str({"Status":"True"}), indent=4, sort_keys=True, default=str)
     except BaseException as error:
         return str({"Error": f"Bad Query {error}"})
 
@@ -194,7 +205,7 @@ def unsubscribe_to_service():
 
             # Check if the record was deleted from the table
             if(cur.rowcount == 0):
-                return json.dumps('{"Status":"True"}', indent=4, sort_keys=True, default=str)
+                return json.dumps(str({"Status":"True"}), indent=4, sort_keys=True, default=str)
 
 
             # --------------  Update redis with recent changes -------------- 
@@ -208,7 +219,7 @@ def unsubscribe_to_service():
                         "time": str(datetime.datetime.now())}
             redisConnection.set(user +"_subscriptions", str(redisObject))
 
-        return json.dumps('{"Status": "False"}', indent=4, sort_keys=True, default=str)
+        return json.dumps(str({"Status": "False"}), indent=4, sort_keys=True, default=str)
     except BaseException as error:
         return str({"Error": f"Bad Query {error}"})
 
