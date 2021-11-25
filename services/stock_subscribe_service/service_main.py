@@ -17,7 +17,7 @@ app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 
-isDevRegion = True
+isDevRegion = False
 
 rds_host = rds_config.rds_host
 rds_username = rds_config.db_username
@@ -87,7 +87,7 @@ def get_user_subscriptions():
     Create app route for subscribing services to a user
     Expected parameters: 'service=<service_name> user=<name_of_user>'
 """
-@app.route('/subscribe', methods=['GET','PUT'])
+@app.route('/subscribe', methods=['GET'])
 def subscribe_to_service():
     try:
         redisConnection = None
@@ -152,7 +152,7 @@ def subscribe_to_service():
     Create app route for unsubscribing a service to a user
     Expected parameters: 'service=<service_name> user=<name_of_user>'
 """
-@app.route('/unsubscribe', methods=['GET','PUT'])
+@app.route('/unsubscribe', methods=['GET'])
 def unsubscribe_to_service():
     try:
         redisConnection = None
