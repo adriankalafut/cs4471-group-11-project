@@ -60,11 +60,10 @@ export default function NavbarComponent() {
           userSubscribedServices = await get_subscribed_services(username);
           userSubscribedServices = resolveSubscribedServices(userSubscribedServices);
         }
+        // Perform intersection on Available services and Subscribed services
         if(userSubscribedServices !=  null && services != null){
           services = availableAndSubscribedServicesIntersection(services,userSubscribedServices);
         }
-        // Perform  the intersection here
-        // Intersect services with subscribed services
         setActiveServices(services);
       } catch (e) {
         setActiveServices(null);
