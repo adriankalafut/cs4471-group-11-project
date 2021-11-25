@@ -11,6 +11,7 @@ export default async function get_active_services() {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "*",
         "Access-Control-Allow-Credentials": true,
+        "Cache-Control": "no-cache",
         Authorization: accessToken,
         "Content-Type": "application/json",
       },
