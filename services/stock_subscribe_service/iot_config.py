@@ -1,0 +1,5 @@
+IOT_ENDPOINT="a3p8onx8y9a7q1-ats.iot.ca-central-1.amazonaws.com"
+ROOT_CA_PATH="AmazonRootCA1.pem"
+PUBLIC_KEY_PATH="91454ac9e6f4f8a1bb0eff59a037e5af2539a74b7ba58dca17949428fb8b0d3d-public.pem.crt"
+PRIVATE_KEY_PATH="91454ac9e6f4f8a1bb0eff59a037e5af2539a74b7ba58dca17949428fb8b0d3d-private.pem.key"
+CLIENT_ID="cluser_services_iot"
