@@ -169,7 +169,9 @@ export default function ServiceBrowser() {
         <div>
           <Button variant="contained" size="large" onClick={() => prepareForPrefsUpdate()} >Update Subscriptions</Button>
         </div>
-        <p>{updateResponse}</p>
+        <CenteredDiv>
+          <p> {updateResponse}</p>
+        </CenteredDiv>
       </Box>
     </CenteredDiv>
   );
