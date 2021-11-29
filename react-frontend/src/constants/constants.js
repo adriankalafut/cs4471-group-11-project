@@ -17,3 +17,6 @@ export const GET_ACTIVE_SERVICES = `${ROOT_API_URL}services/active`;
 
 // Subscribed services
 export const GET_SUBSCRIBED_SERVICES = `${ROOT_API_URL}subscriptions`;
+
+export const UNSUBSCRIBE_SERVICE = `${ROOT_API_URL}unsubscribe`;
+export const SUBSCRIBE_SERVICE = `${ROOT_API_URL}subscribe`;
