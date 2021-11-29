@@ -152,7 +152,7 @@ export default function ServiceBrowser() {
           <ListItem button>
             <ListItemText key={"login_service_ListItemText"} primary="User Preferences Service" />
             <FormGroup>
-              <FormControlLabel key={"login_service_Switch"} control={<Switch onChange={(event, status) => onClickSubUnSub("login_service")} checked={subscribedServices["login_service"]} />} label="Subscribe" />
+              <FormControlLabel key={"login_service_Switch"} control={<Switch disabled onChange={(event, status) => onClickSubUnSub("login_service")} checked={subscribedServices["login_service"]} />} label="Subscribe" />
             </FormGroup>
           </ListItem>
         )}
