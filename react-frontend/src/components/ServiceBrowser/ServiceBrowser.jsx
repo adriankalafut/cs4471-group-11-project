@@ -49,39 +49,40 @@ export default function ServiceBrowser() {
 
   const prepareForPrefsUpdate = async () => {
     // Compare New Prefs to Old
-    const responseArray = []
+    let responseArray = []
 
     if (originalServices['live_visualization_service'] !== subscribedServices['live_visualization_service']){
       if (subscribedServices['live_visualization_service']){
-        responseArray.push(await service_subscribe(username, "live_visualization_service"));
+        responseArray.push(service_subscribe(username, "live_visualization_service"));
       }else{
-        responseArray.push(await service_unsubscribe(username, "live_visualization_service"));
+        responseArray.push(service_unsubscribe(username, "live_visualization_service"));
       }
     }
 
     if (originalServices['search_and_browse_service'] !== subscribedServices['search_and_browse_service']){
       if (subscribedServices['search_and_browse_service']){
-        responseArray.push(await service_subscribe(username, "search_and_browse_service"));
+        responseArray.push(service_subscribe(username, "search_and_browse_service"));
       }else{
-        responseArray.push(await service_unsubscribe(username, "search_and_browse_service"));
+        responseArray.push(service_unsubscribe(username, "search_and_browse_service"));
       }
     }
 
     if (originalServices['login_service'] !== subscribedServices['login_service']){
       if (subscribedServices['login_service']){
-        responseArray.push(await service_subscribe(username, "login_service"));
+        responseArray.push(service_subscribe(username, "login_service"));
       }else{
-        responseArray.push(await service_unsubscribe(username, "login_service"));
+        responseArray.push(service_unsubscribe(username, "login_service"));
       }
     }
 
     if (originalServices['notification_service'] !== subscribedServices['notification_service']){
       if (subscribedServices['notification_service']){
-        responseArray.push(await service_subscribe(username, "notification_service"));
+        responseArray.push(service_subscribe(username, "notification_service"));
       }else{
-        responseArray.push(await service_unsubscribe(username, "notification_service"));
+        responseArray.push(service_unsubscribe(username, "notification_service"));
       }
     }
+    responseArray = await Promise.all(responseArray);
     responseArray.forEach(entry => {
       if (entry !== '{"Status":"True"}'){
         setUpdateResponse("Error!");
