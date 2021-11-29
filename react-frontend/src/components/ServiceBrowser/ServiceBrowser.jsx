@@ -3,16 +3,18 @@ import styled from "styled-components";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { Hub, Auth } from "aws-amplify";
-import get_active_services from "../../api/get-active-services/get-active-services"
-import get_subscribed_services from "../../api/get-subscribed-services/get-subscribed-services"
-import resolveActiveServices from "../../helper/resolveActiveServices";
-import resolveSubscribedServices from "../../helper/resolveSubscribedServices";
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
+import get_active_services from "../../api/get-active-services/get-active-services"
+import get_subscribed_services from "../../api/get-subscribed-services/get-subscribed-services"
+import resolveActiveServices from "../../helper/resolveActiveServices";
+import resolveSubscribedServices from "../../helper/resolveSubscribedServices";
+import service_subscribe from "../../api/service-subscribe/service_subscribe";
+import service_unsubscribe from "../../api/service-subscribe/service_unsubscribe";
 
 const CenteredDiv = styled.div`
   display: flex;
@@ -33,90 +35,141 @@ const style = {
 export default function ServiceBrowser() {
 
   // First get the username of the user in the ServiceBrowser
-  let [user, setUser] = useState(null);
+  let [username, setUsername] = useState("");
   let [activeServices, setActiveServices] = useState(undefined);
   let [subscribedServices, setSubscribedServices] = useState(undefined);
-  useEffect(() => {
-      let authUser = async () => {
-        try {
-          const user = await Auth.currentAuthenticatedUser();
-          username = user["username"];
-          setUser(user);
-        } catch {
-            setUser(null);
-        }
-      };
-      let getActiveServices = async () => {
-        try {
+  let [originalServices, setOriginalServices] = useState(undefined);
+  let [updateResponse, setUpdateResponse] = useState("");
 
-          //  Get the active services
-          let services = await get_active_services();
-          services = resolveActiveServices(services);
-
-          // Get the services that the user is subscribed to
-          let userSubscribedServices = null;
-          if(username != null){
-            userSubscribedServices = await get_subscribed_services(username);
-            userSubscribedServices = resolveSubscribedServices(userSubscribedServices);
-          }
-          setActiveServices(services);
-          setSubscribedServices(userSubscribedServices);
-        } catch (e) {
-          setActiveServices(null);
-          setSubscribedServices(null);
-        }
-      };
-      getActiveServices();
-      Hub.listen("auth", authUser); // listen for login/signup events
-      authUser(); // check manually the first time because we won't get a Hub event
-      return () => Hub.remove("auth", authUser); // cleanup
-  }, []);
-
-  // Store the username
-  let username = null;
-  if(user != null){
-    username = user["username"];
+  const onClickSubUnSub = (service) => {
+    const currentServices = { ...subscribedServices };
+    currentServices[service] = !currentServices[service];
+    setSubscribedServices(currentServices);
   }
-  let subscriptionItems=[];
-  // Iterate through Active and Subscribed services to present correctly formatted
-  // switches
-  for(var key in subscribedServices){
-    // If the service is active
-    if(activeServices[key]){
 
-      // If the user is subscribed to the service then flip switch
-      subscriptionItems.push(<ListItem button>
-        <ListItemText key={key + "_ListItemText"} primary={key} />
-        <FormGroup>
-          <FormControlLabel key={key + "_Switch"}  control={<Switch onChange={(event, status) => {subscribedServices[key] = status; console.log(status)}} checked={subscribedServices[key]} />} label="Subscribe" />
-        </FormGroup>
-      </ListItem>
-      )
+  const prepareForPrefsUpdate = async () => {
+    // Compare New Prefs to Old
+    const responseArray = []
 
-      // // Otherwise, unflip switch
-      // else{
-      //   subscriptionItems.push(<ListItem button>
-      //     <ListItemText key={key + "_ListItemText"} primary={key} />
-      //     <FormGroup>
-      //       <FormControlLabel key={key + "_Switch"} control={<Switch default />} label="Subscribe" />
-      //     </FormGroup>
-      //   </ListItem>
-      //   )
-      // }
+    if (originalServices['live_visualization_service'] !== subscribedServices['live_visualization_service']){
+      if (subscribedServices['live_visualization_service']){
+        responseArray.push(await service_subscribe(username, "live_visualization_service"));
+      }else{
+        responseArray.push(await service_unsubscribe(username, "live_visualization_service"));
+      }
     }
+
+    if (originalServices['search_and_browse_service'] !== subscribedServices['search_and_browse_service']){
+      if (subscribedServices['search_and_browse_service']){
+        responseArray.push(await service_subscribe(username, "search_and_browse_service"));
+      }else{
+        responseArray.push(await service_unsubscribe(username, "search_and_browse_service"));
+      }
+    }
+
+    if (originalServices['login_service'] !== subscribedServices['login_service']){
+      if (subscribedServices['login_service']){
+        responseArray.push(await service_subscribe(username, "login_service"));
+      }else{
+        responseArray.push(await service_unsubscribe(username, "login_service"));
+      }
+    }
+
+    if (originalServices['notification_service'] !== subscribedServices['notification_service']){
+      if (subscribedServices['notification_service']){
+        responseArray.push(await service_subscribe(username, "notification_service"));
+      }else{
+        responseArray.push(await service_unsubscribe(username, "notification_service"));
+      }
+    }
+    responseArray.forEach(entry => {
+      if (entry !== '{"Status":"True"}'){
+        setUpdateResponse("Error!");
+      }
+    });
+    setUpdateResponse("Updated !");
+    setOriginalServices(subscribedServices);
   }
 
-  return(
+  useEffect(() => {
+    let authUser = async () => {
+      try {
+        const user = await Auth.currentAuthenticatedUser();
+        setUsername(user["username"]);
+      } catch {
+        setUsername("");
+      }
+    };
+    let getActiveServices = async () => {
+      try {
+        //  Get the active services
+        let services = await get_active_services();
+        services = resolveActiveServices(services);
+
+        // Get the services that the user is subscribed to
+        let userSubscribedServices = null;
+        if (username != null) {
+          userSubscribedServices = await get_subscribed_services(username);
+          userSubscribedServices = resolveSubscribedServices(userSubscribedServices);
+        }
+        setActiveServices(services);
+        setSubscribedServices(userSubscribedServices);
+        setOriginalServices(userSubscribedServices);
+      } catch (e) {
+        setActiveServices(null);
+        setSubscribedServices(null);
+        setOriginalServices(null);
+      }
+    };
+    getActiveServices();
+    Hub.listen("auth", authUser); // listen for login/signup events
+    authUser(); // check manually the first time because we won't get a Hub event
+    return () => Hub.remove("auth", authUser); // cleanup
+  }, [username]);
+
+  return (
     <CenteredDiv>
       <h1>{username}'s Subscription Dashboard</h1>
       <List sx={style} component="nav">
-        {subscriptionItems}
+        {activeServices && subscribedServices !== undefined && activeServices["live_visualization_service"] && (
+          <ListItem button>
+            <ListItemText key={"Live_Visualization_Service_ListItemText"} primary={"Live Visualization Service"} />
+            <FormGroup>
+              <FormControlLabel key={"Live_Visualization_Service_Switch"} control={<Switch onChange={(event, status) => onClickSubUnSub("live_visualization_service")} checked={subscribedServices["live_visualization_service"]} />} label="Subscribe" />
+            </FormGroup>
+          </ListItem>
+        )}
+        {activeServices && subscribedServices !== undefined && activeServices["search_and_browse_service"] && (
+          <ListItem button>
+            <ListItemText key={"search_and_browse_service_ListItemText"} primary="Search & Browse Service" />
+            <FormGroup>
+              <FormControlLabel key={"search_and_browse_service_Switch"} control={<Switch onChange={(event, status) => onClickSubUnSub("search_and_browse_service")} checked={subscribedServices["search_and_browse_service"]} />} label="Subscribe" />
+            </FormGroup>
+          </ListItem>
+        )}
+        {activeServices && subscribedServices !== undefined  && activeServices["login_service"] && (
+          <ListItem button>
+            <ListItemText key={"login_service_ListItemText"} primary="User Preferences Service" />
+            <FormGroup>
+              <FormControlLabel key={"login_service_Switch"} control={<Switch onChange={(event, status) => onClickSubUnSub("login_service")} checked={subscribedServices["login_service"]} />} label="Subscribe" />
+            </FormGroup>
+          </ListItem>
+        )}
+        {activeServices && subscribedServices !== undefined && activeServices["notification_service"] && (
+          <ListItem button>
+            <ListItemText key={"notification_service_ListItemText"} primary="Notification Service" />
+            <FormGroup>
+              <FormControlLabel key={"notification_service_Switch"} control={<Switch onChange={(event, status) => onClickSubUnSub("notification_service")} checked={subscribedServices["notification_service"]} />} label="Subscribe" />
+            </FormGroup>
+          </ListItem>
+        )}
       </List>
       <Box sx={{ '& button': { m: 1 } }}>
         <div>
-          <Button variant="contained" size="large">Update Subscriptions</Button>
+          <Button variant="contained" size="large" onClick={() => prepareForPrefsUpdate()} >Update Subscriptions</Button>
         </div>
-     </Box>
+        <p>{updateResponse}</p>
+      </Box>
     </CenteredDiv>
   );
 }
