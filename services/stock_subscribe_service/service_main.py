@@ -17,7 +17,7 @@ app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 
-isDevRegion = False
+isDevRegion = True
 
 rds_host = rds_config.rds_host
 rds_username = rds_config.db_username
@@ -79,7 +79,7 @@ def get_user_subscriptions():
             if(cur.rowcount == 0):
                 # Add subscription to Service browser 
                 cur.execute(
-                    f"INSERT INTO coin_data.user_prefs VALUES ('{user}','login_service');")
+                    f"INSERT INTO user_prefs VALUES ('{user}','login_service');")
                 conn.commit()
                 query_result = [{'"subscribed_service":"login_service" '}]
 
@@ -155,6 +155,7 @@ def subscribe_to_service():
                         "time": str(datetime.datetime.now())}
             redisConnection.set(user +"_subscriptions", str(redisObject))
 
+
         return json.dumps(str({"Status":"True"}), indent=4, sort_keys=True, default=str)
     except BaseException as error:
         return str({"Error": f"Bad Query {error}"})
@@ -193,7 +194,7 @@ def unsubscribe_to_service():
 
             # --------------  Remove subscription from table -------------- 
             cur.execute(
-                f"DELETE FROM coin_data.user_prefs WHERE user_name='{user}' AND subscribed_service='{service}';")
+                f"DELETE FROM user_prefs WHERE user_name='{user}' AND subscribed_service='{service}';")
             query_result = conn.commit();
             
 
@@ -204,8 +205,8 @@ def unsubscribe_to_service():
             query_result = cur.fetchall()
 
             # Check if the record was deleted from the table
-            if(cur.rowcount == 0):
-                return json.dumps(str({"Status":"True"}), indent=4, sort_keys=True, default=str)
+            if(cur.rowcount != 0):
+                return json.dumps(str({"Status":"False"}), indent=4, sort_keys=True, default=str)
 
 
             # --------------  Update redis with recent changes -------------- 
@@ -214,12 +215,18 @@ def unsubscribe_to_service():
                 f"SELECT subscribed_service FROM user_prefs WHERE user_name='{user}'")
             query_result = cur.fetchall()
 
-            # Add To Redis
-            redisObject = {"data": json.dumps(query_result, indent=4, default=str),
-                        "time": str(datetime.datetime.now())}
-            redisConnection.set(user +"_subscriptions", str(redisObject))
 
-        return json.dumps(str({"Status": "False"}), indent=4, sort_keys=True, default=str)
+            ## If there are no records associated with this user, then remove the key from the cache
+            if(cur.rowcount ==  0):
+                redisConnection.delete(user +"_subscriptions")
+
+            else:
+                # Add To Redis
+                redisObject = {"data": json.dumps(query_result, indent=4, default=str),
+                            "time": str(datetime.datetime.now())}
+                redisConnection.set(user +"_subscriptions", str(redisObject))
+
+        return json.dumps(str({"Status": "True"}), indent=4, sort_keys=True, default=str)
     except BaseException as error:
         return str({"Error": f"Bad Query {error}"})
 
