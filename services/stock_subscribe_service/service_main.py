@@ -17,7 +17,7 @@ app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 
-isDevRegion = True
+isDevRegion = False
 
 rds_host = rds_config.rds_host
 rds_username = rds_config.db_username
